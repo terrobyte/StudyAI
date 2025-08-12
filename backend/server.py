@@ -282,6 +282,30 @@ async def get_subject_resources(subject: str):
 async def root():
     return {"message": "Educational Study App API"}
 
+@api_router.get("/test-ai")
+async def test_ai():
+    """Test AI integration directly"""
+    try:
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            return {"error": "API key not configured"}
+        
+        # Test simple chat
+        chat = LlmChat(
+            api_key=api_key,
+            session_id="test-session",
+            system_message="You are a helpful assistant."
+        ).with_model("openai", "gpt-4o")
+        
+        user_message = UserMessage(text="Say hello")
+        response = await chat.send_message(user_message)
+        
+        return {"success": True, "response": response}
+        
+    except Exception as e:
+        logger.error(f"Test AI error: {str(e)}")
+        return {"error": str(e)}
+
 # Include the router in the main app
 app.include_router(api_router)
 
