@@ -137,15 +137,18 @@ backend:
 
   - task: "Chat API Endpoints"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented chat endpoint with session management, subject detection, AI model selection, and source attribution."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: Chat API working perfectly. All 3 subjects tested with proper AI model switching: Mathematics→GPT-4o, Photography→Claude Sonnet 4, Film Directing→Gemini 2.0 Flash. Subject detection accurate, university sources (5 per response) included, educational responses appropriate for Year 11-12 level."
 
   - task: "Session Management"
     implemented: true
