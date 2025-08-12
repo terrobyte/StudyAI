@@ -122,15 +122,18 @@ backend:
 
   - task: "University Resources Database"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Created comprehensive database of 13+ universities for each subject (Photography, Film Directing, Mathematics) with department information."
+      - working: true
+        agent: "testing"
+        comment: "TESTED: University resources API working perfectly. All 3 subjects (mathematics, photography, film_directing) return 13 university resources each with proper structure (name, url, department, subject). API endpoint /api/resources/{subject} functioning correctly."
 
   - task: "Chat API Endpoints"
     implemented: true
