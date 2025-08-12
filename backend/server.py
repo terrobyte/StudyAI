@@ -290,6 +290,14 @@ async def test_ai():
         if not api_key:
             return {"error": "API key not configured"}
         
+        # Debug: Check if emergent key is detected and proxy URL
+        is_emergent = api_key.startswith("sk-emergent-") if api_key else False
+        proxy_url = os.getenv("INTEGRATION_PROXY_URL", "https://integrations.emergentagent.com")
+        
+        logger.info(f"API Key prefix: {api_key[:15] if api_key else 'None'}...")
+        logger.info(f"Is Emergent key: {is_emergent}")
+        logger.info(f"Proxy URL: {proxy_url}")
+        
         # Test simple chat
         chat = LlmChat(
             api_key=api_key,
@@ -307,7 +315,10 @@ async def test_ai():
         error_details = traceback.format_exc()
         logger.error(f"Test AI error: {str(e)}")
         logger.error(f"Full traceback: {error_details}")
-        return {"error": str(e), "traceback": error_details}
+        return {"error": str(e), "traceback": error_details, "debug_info": {
+            "is_emergent_key": is_emergent if 'is_emergent' in locals() else "unknown",
+            "proxy_url": proxy_url if 'proxy_url' in locals() else "unknown"
+        }}
 
 # Include the router in the main app
 app.include_router(api_router)
