@@ -303,8 +303,11 @@ async def test_ai():
         return {"success": True, "response": response}
         
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
         logger.error(f"Test AI error: {str(e)}")
-        return {"error": str(e)}
+        logger.error(f"Full traceback: {error_details}")
+        return {"error": str(e), "traceback": error_details}
 
 # Include the router in the main app
 app.include_router(api_router)
