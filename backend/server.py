@@ -300,25 +300,27 @@ async def test_ai():
         logger.info(f"Proxy URL: {proxy_url}")
         logger.info(f"Full API Base: {full_api_base}")
         
-        # Test without using the chat class - directly test the environment
-        return {
-            "debug_info": {
-                "is_emergent_key": is_emergent,
-                "proxy_url": proxy_url,
-                "full_api_base": full_api_base,
-                "env_vars": {
-                    "INTEGRATION_PROXY_URL": os.getenv("INTEGRATION_PROXY_URL"),
-                    "EMERGENT_LLM_KEY_PREFIX": api_key[:15] if api_key else None
-                }
-            }
-        }
+        # Test simple chat
+        chat = LlmChat(
+            api_key=api_key,
+            session_id="test-session",
+            system_message="You are a helpful assistant."
+        ).with_model("openai", "gpt-4o")
+        
+        user_message = UserMessage(text="Say hello")
+        response = await chat.send_message(user_message)
+        
+        return {"success": True, "response": response}
         
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
         logger.error(f"Test AI error: {str(e)}")
         logger.error(f"Full traceback: {error_details}")
-        return {"error": str(e), "traceback": error_details}
+        return {"error": str(e), "traceback": error_details, "debug_info": {
+            "is_emergent_key": is_emergent if 'is_emergent' in locals() else "unknown",
+            "proxy_url": proxy_url if 'proxy_url' in locals() else "unknown"
+        }}
 
 # Include the router in the main app
 app.include_router(api_router)
