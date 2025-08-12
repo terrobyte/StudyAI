@@ -293,32 +293,32 @@ async def test_ai():
         # Debug: Check if emergent key is detected and proxy URL
         is_emergent = api_key.startswith("sk-emergent-") if api_key else False
         proxy_url = os.getenv("INTEGRATION_PROXY_URL", "https://integrations.emergentagent.com")
+        full_api_base = proxy_url + "/llm" if is_emergent else "default"
         
         logger.info(f"API Key prefix: {api_key[:15] if api_key else 'None'}...")
         logger.info(f"Is Emergent key: {is_emergent}")
         logger.info(f"Proxy URL: {proxy_url}")
+        logger.info(f"Full API Base: {full_api_base}")
         
-        # Test simple chat
-        chat = LlmChat(
-            api_key=api_key,
-            session_id="test-session",
-            system_message="You are a helpful assistant."
-        ).with_model("openai", "gpt-4o")
-        
-        user_message = UserMessage(text="Say hello")
-        response = await chat.send_message(user_message)
-        
-        return {"success": True, "response": response}
+        # Test without using the chat class - directly test the environment
+        return {
+            "debug_info": {
+                "is_emergent_key": is_emergent,
+                "proxy_url": proxy_url,
+                "full_api_base": full_api_base,
+                "env_vars": {
+                    "INTEGRATION_PROXY_URL": os.getenv("INTEGRATION_PROXY_URL"),
+                    "EMERGENT_LLM_KEY_PREFIX": api_key[:15] if api_key else None
+                }
+            }
+        }
         
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
         logger.error(f"Test AI error: {str(e)}")
         logger.error(f"Full traceback: {error_details}")
-        return {"error": str(e), "traceback": error_details, "debug_info": {
-            "is_emergent_key": is_emergent if 'is_emergent' in locals() else "unknown",
-            "proxy_url": proxy_url if 'proxy_url' in locals() else "unknown"
-        }}
+        return {"error": str(e), "traceback": error_details}
 
 # Include the router in the main app
 app.include_router(api_router)
